@@ -23,3 +23,11 @@ def root():
 @app.get("/health")
 def health():
     return {"STATUS": "RUNNING"}
+
+@app.post("/user",response_model=schemas.UserResponse)
+def create_user(
+    user: schemas.UserCreate,
+    db: Session =Depends(get_db)
+
+):
+    return crud.create_user(db,user)
