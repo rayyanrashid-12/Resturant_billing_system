@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends,HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
@@ -31,3 +31,7 @@ def create_user(
 
 ):
     return crud.create_user(db,user)
+
+@app.get("/user", response_model=list[schemas.UserResponse])
+def get_users(db: Session= Depends(get_db)):
+    return crud.get_user(db)
