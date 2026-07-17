@@ -24,5 +24,19 @@ def create_user(db: Session, user:schemas.UserCreate):
     db.refresh(db_user)
 
     return db_user
-def get_user(db:Session):
+
+def get_users(db: Session):
     return db.query(models.User).all()
+
+def get_user(db: Session, user_id: int):
+    user = db.query(models.User).filter(
+        models.User.id == user_id
+    ).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    return user

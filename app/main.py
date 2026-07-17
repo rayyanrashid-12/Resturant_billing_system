@@ -30,8 +30,16 @@ def create_user(
     db: Session =Depends(get_db)
 
 ):
-    return crud.create_user(db,user)
+    return crud.create_user(db )
 
 @app.get("/user", response_model=list[schemas.UserResponse])
 def get_users(db: Session= Depends(get_db)):
     return crud.get_user(db)
+
+
+@app.get("/user/{user_id}", response_model=schemas.UserResponse)
+def get_user(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    return crud.get_user(db, user_id)
