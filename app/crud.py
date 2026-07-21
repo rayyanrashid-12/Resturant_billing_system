@@ -40,3 +40,23 @@ def get_user(db: Session, user_id: int):
         )
 
     return user
+
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    user = db.query(models.User).filter(
+        models.User.id == user_id
+    ).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    user.name = user_update.name
+    user.email = user_update.email
+    user.role = user_update.role
+
+    db.commit()
+    db.refresh(user)
+
+    return user

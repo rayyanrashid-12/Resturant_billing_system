@@ -43,3 +43,13 @@ def get_user(
     db: Session = Depends(get_db)
 ):
     return crud.get_user(db, user_id)
+
+@app.put("/user/{user_id}",response_model=schemas.UserResponse)
+def update_user(
+    user_id: int,
+    user_update: schemas.UserUpdate,
+    db: Session= Depends(get_db)
+
+):
+    return crud.update_user(db,user_id,user_update)
+
