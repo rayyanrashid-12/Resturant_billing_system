@@ -10,7 +10,7 @@ def create_user(db: Session, user:schemas.UserCreate):
     if existing_user:
         raise HTTPException(
             status_code=400,
-            detail="Email already required"
+            detail="Email already exists"
         )
     db_user = models.User(
         name=user.name,
@@ -60,3 +60,20 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
     db.refresh(user)
 
     return user
+
+def delete_user(db: Session, user_id: int):
+    user = db.query(models.User).filter(
+        models.User.id == user_id
+    ).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    
+    db.delete(user)
+    db.commit()
+
+    return {"message": "User deleted successfully"}
