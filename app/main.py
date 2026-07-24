@@ -2,7 +2,8 @@ from fastapi import FastAPI, Depends,HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
-from app import schemas, crud,models
+from app import schemas, models
+from app.routers.crud import users
 from app.auth import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
 app = FastAPI()
@@ -30,11 +31,11 @@ def create_user(
     user: schemas.UserCreate,
     db: Session = Depends(get_db)
 ):
-    return crud.create_user(db, user)
+    return users.create_user(db, user)
 
 @app.get("/user", response_model=list[schemas.UserResponse])
 def get_users(db: Session= Depends(get_db)):
-    return crud.get_user(db)
+    return users.get_users(db)
 
 
 @app.get("/user/{user_id}", response_model=schemas.UserResponse)
@@ -42,7 +43,7 @@ def get_user(
     user_id: int,
     db: Session = Depends(get_db)
 ):
-    return crud.get_user(db, user_id)
+    return users.get_user(db, user_id)
 
 @app.put("/user/{user_id}",response_model=schemas.UserResponse)
 def update_user(
@@ -51,8 +52,7 @@ def update_user(
     db: Session= Depends(get_db)
 
 ):
-    return crud.update_user(db,user_id,user_update)
-
+    return users.update_user(db, user_id, user_update)
 
 @app.post("/login", response_model=schemas.Token)
 def login(
@@ -64,8 +64,7 @@ def login(
         password=form_data.password
     )
 
-    return crud.login_user(db, login_data)
-@app.get("/me")
+    return users.login_user(db, login_data)
 def get_me(current_user: models.User = Depends(get_current_user)):
     return current_user
 
@@ -160,3 +159,10 @@ def bill(
     current_user=Depends(get_current_user)
 ):
     return crud.generate_bill(db, order_id)
+
+@app.get("/reports")
+def reports(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    return crud.sales_report(db)
